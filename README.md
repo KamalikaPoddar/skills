@@ -31,6 +31,7 @@ Skills are plain markdown under the hood. They work anywhere.
 | Skill | What It Does | Track |
 |---|---|---|
 | [AI Native PM Coach](./skills/ai-native-pm-coach/) | Structured coaching for experienced PMs becoming AI-native builders | Coaching |
+| [Rapid Prototyping](./skills/pm-rapid-prototype-builder/) | Turn your concept note or PRD into a working, on-brand, stakeholder-ready prototype in hours not weeks | Building |
  
 *More skills added as I build and test them. See [Contributing](#contributing) if you want to add your own.*
  
@@ -225,15 +226,30 @@ When modifying any skill, preserve:
  
 ```
 skills/
-├── README.md                              ← You are here
+├── README.md                                ← You are here
 └── skills/
-    └── ai-native-pm-coach/
-        ├── SKILL.md                       ← Full instruction protocol
-        ├── README.md                      ← Skill-level documentation
-        ├── ai-native-pm-coach.skill       ← Packaged for Claude upload
+    └── AI PM Coach/
+        ├── SKILL.md                         ← Full instruction protocol
+        ├── README.md                        ← Skill-level documentation
+        ├── ai-native-pm-coach.skill         ← Packaged for Claude upload
         └── references/
-            ├── session-log-template.md    ← User-facing continuity file
-            └── coach-vault-template.md    ← Private coach continuity file
+            ├── session-log-template.md      ← User-facing continuity file
+            └── coach-vault-template.md      ← Private coach continuity file
+    └── Rapid Prototyping/
+        ├── SKILL.md                         ← Full instruction protocol
+        ├── README.md                        ← Skill-level documentation
+		├── pm-rapid-prototype-builder.skill ← Packaged for Claude upload
+		└── references/
+            └── tools/                       ← Specific prompts for different vibe coding tools
+                ├── bolt.md                
+                ├── v0.md                
+                ├── claude-artifacts.md                
+                ├── claude-code.md                
+                ├── bolt.md                
+                └── cursor.md
+            ├── brand-style-agent.md         ← Specify brand style guides to ensure mock ups are consistent
+		    ├── tool-selector.md             ← Help PM chose a vibe coding tool basis the constraints ahd complexity of the feature they are building
+	        └── industry-context-agent.md    ← Backend agent to get industry context of PM to ensure the prototype follows the regulatory and compliance norms if any
 ```
  
 ---
