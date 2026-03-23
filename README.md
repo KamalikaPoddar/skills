@@ -31,6 +31,7 @@ Skills are plain markdown under the hood. They work anywhere.
 | Skill | What It Does | Track |
 |---|---|---|
 | [AI Native PM Coach](./skills/ai-native-pm-coach/) | Structured coaching for experienced PMs becoming AI-native builders | Coaching |
+| [Rapid Prototyping](./skills/pm-rapid-prototype-builder/) | Turn your concept note or PRD into a working, on-brand, stakeholder-ready prototype in hours not weeks | Building |
  
 *More skills added as I build and test them. See [Contributing](#contributing) if you want to add your own.*
  
