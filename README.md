@@ -246,10 +246,10 @@ skills/
                 ├── claude-artifacts.md                
                 ├── claude-code.md                
                 ├── bolt.md                
-				            └── cursor.md
-			         ├── brand-style-agent.md         ← Specify brand style guides to ensure mock ups are consistent
-		         	├── tool-selector.md             ← Help PM chose a vibe coding tool basis the constraints ahd complexity of the feature they are building
-	         		├── industry-context-agent.md    ← Backend agent to get industry context of PM to ensure the prototype follows the regulatory and compliance norms if any
+                └── cursor.md
+            ├── brand-style-agent.md         ← Specify brand style guides to ensure mock ups are consistent
+		    ├── tool-selector.md             ← Help PM chose a vibe coding tool basis the constraints ahd complexity of the feature they are building
+	        ├── industry-context-agent.md    ← Backend agent to get industry context of PM to ensure the prototype follows the regulatory and compliance norms if any
 ```
  
 ---
