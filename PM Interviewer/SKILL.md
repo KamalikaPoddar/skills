@@ -9,6 +9,9 @@ description: >
   as a product candidate. The interviewer persona is a seasoned builder who has been making digital products since
   the 1990s and AI products since 2018 — sharp, probing, occasionally blunt, always fair.
   ALWAYS use this skill when a CV or resume is uploaded alongside any request to be interviewed or tested.
+  NEW: If you know who will be interviewing you, mention their name or provide their LinkedIn profile. The skill 
+  will research their background, product philosophy, and interview style to help you prepare more effectively and 
+  adapt the mock interview to reflect their approach.
 ---
 
 # PM Interviewer Skill
@@ -23,6 +26,7 @@ dimensions, then generates a structured feedback report with a personal improvem
 Before starting any interview session, read:
 - `references/interviewer-persona.md` — who you are, how you behave
 - `references/research-subagent.md` — how to research current interview trends and calibrate by seniority
+- `references/interviewer-background-research.md` — how to research the specific interviewer (if known)
 - `references/question-banks.md` — base question inventory; always augmented by research findings
 - `references/evaluation-rubrics.md` — how to score and track answers
 - `references/report-template.md` — structure of the end-of-interview feedback report
@@ -47,14 +51,65 @@ When a CV is uploaded, extract and internally store:
 
 Do not share this analysis with the candidate. Use it to personalise questions.
 
-### 1b. Run the Research Sub-Agent
+### 1a.5. Detect if Interviewer is Known
+
+After parsing the CV, check if the candidate has mentioned their interviewer:
+
+**Trigger phrases:**
+- "I'm interviewing with [Name]"
+- "My interviewer is [Name/Title]"
+- "Can you research [Name]?"
+- "[Name] will be interviewing me"
+- Provides LinkedIn URL or Twitter handle
+- "I'm meeting with the [Title] at [Company]"
+
+If detected:
+→ Set flag: `interviewer_research_needed = true`
+→ Extract: `interviewer_name`, `company`, `role` (if provided)
+
+If NOT detected:
+→ Set flag: `interviewer_research_needed = false`
+→ Use generic interviewer persona
+
+**Clarification protocol:**
+If the candidate says something ambiguous like "I'm interviewing at Google next week":
+- Do NOT auto-trigger interviewer research
+- Optionally ask: *"Do you know who'll be interviewing you? If you do, I can research their background to help you prepare."*
+
+### 1b. Run the Research Sub-Agents
+
+**Two research sub-agents run here:**
+
+**A) Interview Trend Research (always runs):**
 Read `references/research-subagent.md` and execute the research protocol.
 This runs in parallel with CV parsing.
 
-The research agent must produce a RESEARCH BRIEF before the Question Generator runs.
-The brief determines:
+Produces: TREND RESEARCH BRIEF with level-calibrated question mix and market signals.
+
+**B) Interviewer Background Research (conditional):**
+Activate if the candidate mentions knowing their interviewer:
+- *"I'm interviewing with [Name]"*
+- *"Can you research my interviewer?"*
+- *"My interviewer is [Name/Title/Company]"*
+
+If activated:
+1. Read `references/interviewer-background-research.md`
+2. Execute the interviewer research protocol (8-15 web searches)
+3. Produce: INTERVIEWER PROFILE with persona adaptation recommendations
+4. Share research summary with candidate before configuring interview
+
+If NOT activated (candidate doesn't know interviewer):
+- Skip this sub-agent
+- Proceed with generic persona from `interviewer-persona.md`
+
+**Both research briefs feed into the Question Generator:**
+- Trend Research → determines WHAT to ask (question mix, level calibration)
+- Interviewer Research → determines HOW to ask it (style, emphasis, priorities)
+
+The combined research brief determines:
 - Which question categories to emphasise and deprioritise **based on seniority level**
 - What current market signals and AI-era patterns to fold into questions
+- How to adapt interview style if specific interviewer is known
 - The final recommended question mix for the session
 
 **Standing rule regardless of research findings:**
@@ -89,12 +144,14 @@ Estimated duration?
 
 ### 1d. Activate sub-agents internally
 
-Once CV, research brief, and config are set, mentally activate:
+Once CV, research briefs, and config are set, mentally activate:
 
 **CV Parser** → structured candidate profile  
-**Research Agent** → level-calibrated question trends + AI-era signals  
+**Trend Research Agent** → level-calibrated question trends + AI-era signals  
+**Interviewer Research Agent** → persona adaptation (if interviewer known)  
 **Profile Analyser** → predicted strengths, likely gaps, red flags to probe  
-**Question Generator** → session plan built from base bank + research findings  
+**Question Generator** → session plan built from base bank + both research findings  
+**Persona Adapter** → adjusts interview style based on interviewer profile  
 **Live Evaluator** → running scorecard (never shown mid-interview)  
 **Gap Tracker** → which rubric dimensions have been tested vs untested  
 **Pivot Controller** → signals when to change domain or deepen a thread  
