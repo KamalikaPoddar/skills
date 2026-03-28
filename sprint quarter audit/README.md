@@ -1,97 +1,98 @@
 # PM Sprint & Quarter Audit
 
-> **A forensic investigation into sprint and quarter delivery. Not a feelings
-> retrospective. A data-grounded audit that finds what retros miss.**
+> **A three-pass forensic audit. Not a feelings retro. A data investigation
+> that tells you whether your team is actually getting better.**
 
-A multi-agent skill that cross-references sprint execution data, roadmap commitments,
-OKRs, and 6 sprints of history to surface: what was actually delivered, whether it
-moved the metrics, whether the quarter's work adds up to anything coherent, and the
-uncomfortable patterns the official narrative tends to omit.
+A multi-agent skill that audits sprint and quarter delivery across three
+sequential passes: artifact quality (did we write good tickets?), execution
+quality (did we run the sprint well?), and outcomes (did the work add up?).
+
+Now includes CodeRabbit PR summary integration for implementation delta
+analysis — crossing AC against what was actually built.
 
 Built by [Kamalika Poddar](https://github.com/kamalikap)
 
 ---
 
-## Why This Skill Exists
+## Three Passes, One Truth
 
-The image that sparked it says it perfectly:
+```
+PASS 1 — ARTIFACT QUALITY          PASS 2 — EXECUTION QUALITY
+────────────────────────            ──────────────────────────
+A1: Ticket classification           B1: Bug classification
+A2: Description depth scoring           (functional/technical/regression)
+A3: AC edge case coverage           B2: Sprint board flow analysis
+A4: Grooming depth                  B3: Spillage root cause (per-ticket)
+A5: Estimation calibration          B4: Review checkpoint quality
+                                    B5: Implementation delta (CodeRabbit)
 
-> *"I find the assumption hole your PRD is quietly built on. Most PMs never
-> stress-test their own bets at all."*
-> *"I run RICE, Kano, MoSCoW simultaneously and show where they conflict."*
-
-The audit skill does the same thing for delivery:
-
-- **Cross-references 6 sprints of data simultaneously** — without the fatigue
-  or anchoring bias that affects human retrospectives
-- **Separates output from outcome** — "we shipped 47 tickets" vs "the metric
-  moved 8% toward target" are not the same statement
-- **Generates uncomfortable data-grounded observations** — the patterns the data
-  shows that the official narrative doesn't say
-- **Respects the human moat** — every major finding is paired with a specific
-  question only the PM can answer (org context, team dynamics, decisions that
-  weren't captured in Jira)
-
----
-
-## Two Modes
-
-### Sprint Audit
-Deep forensics on a single sprint. Use: weekly retro, mid-sprint health check,
-or when something felt off but you can't name what.
-
-Runs: Ingestion (1A + 1B + 1C + optional 1D) → Delivery Fidelity (2) →
-Work Composition (3) → OKR Impact (4) → Patterns if history available (6) →
-Uncomfortable Truths (7) → Team Brief (8A) + Next Sprint Inputs (8C)
-
-### Quarter Audit
-Full strategic health assessment of the quarter. Use: quarterly business review,
-board prep, annual planning, or when the quarter felt busy but you're not sure
-what it added up to.
-
-Runs: Everything. All 8 agents. Produces 8A + 8B + 8C + 8D.
+                    PASS 3 — OUTCOMES & IMPROVEMENT
+                    ────────────────────────────────
+                    C1: Delivery fidelity
+                    C2: Work composition
+                    C3: OKR impact
+                    C4: Strategic coherence (quarter only)
+                    C5: Retro accountability + sprint-over-sprint
+                    C6: Cross-sprint patterns (6-sprint history)
+                    C7: Uncomfortable truths (all 3 passes)
+```
 
 ---
 
-## The Five Things This Audit Finds That Retros Miss
+## What's New vs Previous Version
 
-| Finding | Why retros miss it |
-|---|---|
-| **Unplanned work ratio** | Teams don't count tickets that entered mid-sprint when calculating "how much we delivered" |
-| **OKR orphaned work** | Nobody explicitly asks "what % of this sprint had nothing to do with our stated objectives?" |
-| **Carryover recidivism** | Retros address the current sprint; chronic carryover requires looking across sprints |
-| **The output gap** | Retros celebrate shipping; the gap between shipping and moving metrics is rarely examined |
-| **Strategic drift without a decision record** | Items quietly drop off the roadmap without being explicitly deferred — the data shows it, the conversation doesn't |
+| Capability | Previous | This version |
+|---|---|---|
+| Ticket type accuracy check | ✗ | ✓ A1 |
+| Description depth scoring | ✗ | ✓ A2 |
+| AC edge case coverage | ✗ | ✓ A3 |
+| Technical design depth | ✗ | ✓ A4 |
+| Estimation process + accuracy | Partial | ✓ A5 |
+| Bug type classification | ✗ | ✓ B1 (functional/technical/regression) |
+| Board flow + regressions | ✗ | ✓ B2 |
+| Per-ticket spillage root cause | Partial | ✓ B3 (MECE taxonomy) |
+| Code review substantiveness | ✗ | ✓ B4 |
+| AC vs implementation delta | ✗ | ✓ B5 (CodeRabbit) |
+| Retro accountability | ✗ | ✓ C5 — did last retro's actions land? |
+| Sprint-over-sprint trends | Partial | ✓ C5 — all dimensions tracked |
+| Retro quality audit | ✗ | ✓ C5c — were retro items data-grounded? |
 
 ---
 
-## Data Sources Supported
+## CodeRabbit Integration
 
-### Sprint Data
-| Tool | Connection |
-|---|---|
-| Jira | MCP (auto) or CSV export |
-| Linear | MCP (auto) or CSV export |
-| GitHub Projects | Export or paste |
-| Any other | Paste / manual summary |
+Pass 2 B5 cross-references your AC against what was actually implemented,
+using the CodeRabbit PR summary as the implementation source of truth.
 
-### Roadmap Data
-| Tool | Connection |
-|---|---|
-| Aha! | MCP or CSV export |
-| Confluence | MCP or paste page content |
-| Excel / Google Sheets | File upload or Google Sheets MCP |
-| Notion | MCP or paste database |
-| Linear roadmap | MCP or paste |
-| Productboard | CSV export or paste |
-| No tool / prose | Paste directly — skill normalises any format |
+**Why CodeRabbit summaries (not raw diffs):**
+Raw diffs are noisy and hundreds of lines. CodeRabbit summaries are already
+translated into plain English — directly comparable to AC statements.
 
-### OKR Data
-| Mode | Method |
-|---|---|
-| Semantic inference | No setup — skill reads ticket descriptions |
-| Explicit links | Requires Jira→OKR tagging in your workflow |
-| Manual OKR input | Paste your OKRs with metric baselines |
+**How to provide them:**
+At the audit intake, paste the CodeRabbit summary from the **merged PR**
+for each ticket you want checked. Copy from the PR page after merge.
+Takes 20–30 seconds per ticket — worth it for the findings it surfaces.
+
+**Also works with:** GitHub Copilot PR summaries, Graphite, LinearB,
+manually written PR descriptions (lower confidence).
+
+**Future:** Full automation via Jira→GitHub→CodeRabbit API chain is
+documented in the implementation delta reference file.
+
+---
+
+## Retro Accountability
+
+Paste last sprint's retro action items at intake.
+The audit will cross-reference each item against this sprint's data and
+tell you exactly which items produced measurable change, which produced
+no change, and which made things worse.
+
+A retro effectiveness score is produced:
+- HIGH: >60% of action items demonstrably improved
+- MEDIUM: 30–60% improved  
+- LOW: <30% improved
+- PERFORMATIVE: 0% improved — the retro produced items nobody acted on
 
 ---
 
@@ -99,95 +100,42 @@ Runs: Everything. All 8 agents. Produces 8A + 8B + 8C + 8D.
 
 ```
 pm-sprint-audit/
-├── SKILL.md                                    # Orchestrator + mode routing
+├── SKILL.md                                    # Orchestrator + 3-pass routing
 ├── README.md                                   # This file
 └── references/
-    ├── agent-1a-sprint-ingestion.md            # Jira / Linear / GitHub / paste
-    ├── agent-1b-roadmap-ingestion.md           # All 6 roadmap tool types
+    ├── agent-1a-sprint-ingestion.md            # Extended: ticket content + changelog
+    ├── agent-1b-roadmap-ingestion.md           # All roadmap tool types
     ├── agents-1c-1d-okr-quality.md             # OKR intake + quality signals
-    ├── agents-2-3-delivery-composition.md      # Delivery fidelity + work mix
-    ├── agents-4-5-okr-strategic.md             # OKR impact + strategic coherence
-    ├── agents-6-7-patterns-truths.md           # 6-sprint patterns + uncomfortable truths
-    └── agent-8-output-artifacts.md             # Team brief + exec report + calibration + Q retro
+    ├── pass-1-artifact-quality.md              # A1–A5 rubric engine (NEW)
+    ├── pass-2-execution-quality.md             # B1–B4 board flow + bugs (NEW)
+    ├── pass-2-implementation-delta.md          # B5 CodeRabbit integration (NEW)
+    ├── agents-2-3-delivery-composition.md      # C1, C2 — delivery + composition
+    ├── agents-4-5-okr-strategic.md             # C3, C4 — OKR + strategic coherence
+    ├── pass-3-retro-improvement.md             # C5 — retro accountability (NEW)
+    ├── agents-6-7-patterns-truths.md           # C6, C7 — patterns + truths (updated)
+    └── agent-8-output-artifacts.md             # 8A–8F outputs (updated with 8A, 8B)
 ```
 
 ---
 
-## The Human Moat Protocol
+## Output Artifacts
 
-Every significant finding in this audit ends with:
-
-```
-📌 CONTEXT NEEDED FROM PM:
-   The data shows [finding]. What's the explanation?
-```
-
-Claude sees:
-- That the enterprise feature slipped for the 4th sprint in a row
-- That OKR2 received 2% of sprint capacity across 6 sprints despite being Priority 1
-- That velocity declined 22% over the quarter while bug-fix % rose 18%
-
-Only the PM knows:
-- That the CTO and CPO haven't aligned on the enterprise feature's direction
-- That OKR2 was effectively deprioritised in an informal leadership conversation that
-  wasn't captured anywhere
-- That two senior engineers left the team in Q2 and the replacement ramp took 6 weeks
-
-The audit is only complete when both layers are present. Claude provides the
-data skeleton. The PM provides the org-aware tissue.
-
----
-
-## OKR Mode Explained
-
-At the start of every audit, you choose:
-
-**Semantic Inference (Mode A):** Claude reads ticket descriptions and infers OKR
-connections using language matching. No setup required. Good for teams without
-formal OKR tagging in Jira. Higher coverage, some noise — all inferences are
-explicitly flagged.
-
-**Explicit Links Only (Mode B):** Claude counts only tickets with a documented
-OKR field, matching epic label, or explicit initiative link. Everything else is
-"orphaned work." Lower noise, reveals exactly how disciplined OKR tagging is.
-Good for teams that claim strong OKR hygiene — the audit will confirm or challenge that.
-
-You can use Mode A to get started and switch to Mode B as OKR hygiene improves.
-
----
-
-## Example: What a Quarter Audit Might Find
-
-**Input:** Q2 sprint data from Jira, roadmap from Confluence, OKRs from Notion.
-
-**What the team said:** "Q2 was mostly on track. We hit our major milestones."
-
-**What the audit found:**
-
-- Roadmap fidelity: 54% — the two features that shipped were planned for Q1; Q2's
-  flagship commitment (the enterprise tier) was not started
-- OKR2 ("Improve API developer experience"): received 3% of quarter capacity across
-  4 sprints — effectively unfunded despite being stated Priority 1
-- Unplanned reactive work: averaged 34% of sprint capacity — above the 20% threshold
-  where reactive culture is classified as "concerning" for 3 of 4 sprints
-- Output gap on KR1: 28 pts of work shipped toward the metric; metric moved +2% vs
-  target of +15% — hypothesis about what drives this KR requires revisiting
-
-**Comfortable story:** "We had a productive quarter."
-**Data story:** "The quarter produced output. Strategic commitments were not delivered.
-The metrics tell a different story than the ticket count."
-
-📌 **Context needed:** Was the enterprise tier deliberately deferred after a
-leadership conversation? Was there a customer situation that drove the reactive
-work spike? The data raises the question; only the PM can answer it.
+| Artifact | Audience | When produced |
+|---|---|---|
+| 8A Ticket Quality Report | PM + tech lead + engineers | Every sprint |
+| 8B Board Flow Report | PM + tech lead | Every sprint |
+| 8C Team Retro Brief | Engineering team | Every sprint |
+| 8D Exec Audit Report | CPO / VP Product | Quarter audit |
+| 8E Next Sprint Calibration | PM + team | Every sprint |
+| 8F Quarter Report | PM + leadership | Quarter audit |
 
 ---
 
 ## Author
 
 **Kamalika Poddar**
-12 years in fintech infrastructure — core banking, UPI, payment aggregators,
-account aggregators, wealth tech, and cross-border payment rails.
+12 years in fintech — core banking, UPI, payment aggregators, account aggregators,
+wealth tech, and cross-border payment rails.
 
 [GitHub](https://github.com/kamalikap) · [LinkedIn](https://linkedin.com/in/kamalikap)
 

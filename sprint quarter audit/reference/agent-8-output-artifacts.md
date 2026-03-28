@@ -316,3 +316,93 @@ Generated: [date]
 Audit mode: Quarter | Sprints analysed: [N] | Data sources: [list]
 ═══════════════════════════════════════════════════════════
 ```
+
+---
+
+# 8A — Ticket Quality Report (NEW)
+
+**Audience:** PM + tech lead + engineers who write tickets.
+**Tone:** Precise, rubric-based, constructive. Shows the data behind each score.
+**Length:** One section per ticket, sprint summary at top.
+
+```
+═══════════════════════════════════════════════════════════
+TICKET QUALITY REPORT — [Sprint Name] | [Date]
+═══════════════════════════════════════════════════════════
+
+SPRINT SUMMARY
+──────────────
+Tickets audited: [N of N total]
+Average quality score: [X/5]
+
+By dimension:
+  Classification accuracy: [X/5] | Description quality:  [X/5]
+  AC coverage:             [X/5] | Grooming depth:        [X/5]
+  Estimation calibration:  [X/5]
+
+Systemic gaps (appearing in >50% of tickets):
+  [Gap 1 — specific]
+  [Gap 2]
+
+Top improvement priority: [A1/A2/A3/A4/A5] — [what to fix and how]
+
+INDIVIDUAL TICKET SCORES
+─────────────────────────
+[Table: Ticket ID | Type | A1 | A2 | A3 | A4 | A5 | Overall | Top fix]
+
+TICKETS NEEDING REWORK (score < 2.5):
+  [PROJ-ID]: "[Title]" — [specific top action before next sprint]
+
+WHAT WENT WELL:
+  [Evidence-grounded positive finding — specific tickets that were well-written]
+
+TREND VS PRIOR SPRINT:
+  [Improving / Stable / Declining — with evidence if available]
+═══════════════════════════════════════════════════════════
+```
+
+---
+
+# 8B — Board Flow Report (NEW)
+
+**Audience:** PM + tech lead + engineers.
+**Tone:** Process-focused, bottleneck-oriented, non-blaming.
+**Length:** One page. Board health + per-ticket flow anomalies.
+
+```
+═══════════════════════════════════════════════════════════
+BOARD FLOW REPORT — [Sprint Name] | [Date]
+═══════════════════════════════════════════════════════════
+
+FLOW HEALTH
+────────────
+Sprint flow efficiency: [HIGH / MEDIUM / LOW]
+Stage bottleneck: [stage] — avg [X days] vs expected [Y days]
+Tickets with regressions: [N] ([X%])
+Review health: [HIGH / MEDIUM / LOW] — avg wait [X hours]
+
+IMPLEMENTATION DELTA
+─────────────────────
+Tickets with CodeRabbit analysis: [N]
+AC coverage rate: [X%]
+Contradictions found: [N] — [list ticket IDs]
+Unspecified scope additions: [N]
+
+BUG BREAKDOWN
+──────────────
+Functional: [N] | Technical: [N] | Regression: [N] | UX-reclassify: [N]
+Bug density: [X bugs/story pt]
+Regressions caught in review: [N] | Missed in review: [N]
+
+FLOW ANOMALIES (tickets needing discussion):
+  [PROJ-ID]: "[Title]" — [specific anomaly: N regressions / stalled in X /
+              AC contradiction / regression bug not caught in review]
+  
+  [Continue for each anomaly]
+
+TOP 3 PROCESS IMPROVEMENTS:
+  1. [Specific, actionable, evidence-grounded]
+  2. [Specific]
+  3. [Specific]
+═══════════════════════════════════════════════════════════
+```

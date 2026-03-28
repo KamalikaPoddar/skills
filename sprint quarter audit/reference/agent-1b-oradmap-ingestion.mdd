@@ -1,0 +1,190 @@
+# Agent 1B — Roadmap Ingestion
+ 
+Handles 6 different roadmap source types. Regardless of source, produces
+the same Normalised Roadmap Package that all downstream agents consume.
+ 
+**Critical discipline:** The roadmap is the source of truth for what the team
+*committed* to. The audit measures drift from this commitment. If no roadmap
+exists, the audit can still run — but strategic coherence analysis (Agent 5)
+will be limited to OKR alignment rather than roadmap drift.
+ 
+---
+ 
+## Source Type Handling
+ 
+### Aha! (Enterprise Structured)
+ 
+If Aha! MCP connected (or if PM provides Aha! export):
+ 
+Extract per initiative/feature:
+```
+- Initiative name + description
+- Features under each initiative
+- Release/quarter target
+- Priority (MoSCoW or custom scale)
+- Status (Under Consideration / Planned / In Development / Shipped)
+- OKR or goal link (Aha! has native goal linking)
+- Owner
+- % complete (if tracked)
+```
+ 
+Map Aha! hierarchy to normalised format:
+```
+Aha! Goal      → Strategic Objective (= OKR level)
+Aha! Initiative → Theme / Epic
+Aha! Feature   → Feature commitment
+Aha! Release   → Quarter/Sprint target
+```
+ 
+### Confluence Tables / Pages
+ 
+Read the Confluence page. Identify roadmap structure (usually one of):
+- A table with columns: Feature | Quarter | Priority | Status | Owner
+- A page with H2 headings per quarter, bullet features underneath
+- A prioritised backlog section in a spec or strategy doc
+ 
+Extraction approach:
+```
+For tables: parse columns, map to normalised fields (flexible — column names vary)
+For prose: extract any item that has: a feature name + a time indicator
+           (Q1/Q2/H1/Sprint N/January) + a priority signal (P1/Critical/Must-have)
+```
+ 
+If Confluence MCP connected: fetch by URL or search for "roadmap" in the space.
+If not: ask PM to paste the roadmap table or copy the relevant page content.
+ 
+### Excel / Google Sheets
+ 
+Most fintech PMs who roadmap in Excel use one of two patterns:
+- **Gantt-style:** Rows = features, Columns = weeks/months/quarters (shaded = in scope)
+- **Backlog-style:** Rows = features, Columns = Name | Quarter | Priority | Status | OKR
+ 
+For Google Sheets: if MCP connected, fetch by URL.
+For Excel: accept file upload or CSV export.
+ 
+**Flexible column detection** — do NOT require exact column names. Detect by:
+```
+Feature/item column:   first text column with long values (feature names)
+Time column:           column with Q1/Q2/Q3/Q4 or month names or sprint numbers
+Priority column:       column with values like P1/P2/High/Medium/Critical/MoSCoW
+Status column:         values like Done/In Progress/Planned/Backlog/Shipped
+OKR/Goal column:       column referencing goals, OKRs, or strategic themes
+```
+ 
+When columns are ambiguous, show PM the detected mapping and ask for confirmation
+before running analysis.
+ 
+### Notion Databases
+ 
+If Notion MCP connected: fetch the roadmap database by URL.
+ 
+Standard Notion roadmap properties to look for:
+```
+Name (title), Status (select), Quarter (select or date), 
+Priority (select), Team/Owner (person), OKR (relation or text),
+Sprint (number or select), Feature type (select)
+```
+ 
+If properties use non-standard names (PMs customise heavily):
+detect by property type and value patterns, same as Excel above.
+ 
+### Linear Roadmap View
+ 
+Linear's roadmap is project-based. Extract:
+```
+Projects (= roadmap themes/initiatives)
+  → Milestones within each project (= quarterly targets)
+  → Status of each milestone
+  → Issues assigned to each milestone (= committed features)
+```
+ 
+If Linear MCP connected: auto-fetch.
+If not: ask PM to export or screenshot + describe the roadmap.
+ 
+### Productboard
+ 
+Productboard has a feature prioritisation and roadmap view. Extract:
+```
+Features in "Now" / "Next" / "Later" lanes (or custom lanes)
+Features linked to objectives
+Prioritisation scores (if PM has set them)
+Release dates/quarters
+```
+ 
+If Productboard is not MCP-connected: ask PM to export CSV from Productboard
+(Features → Export to CSV) or paste the current roadmap view.
+ 
+### Paste / Upload (Tool-Agnostic Primary)
+ 
+Accept any format:
+- Prose description of the roadmap ("This quarter we planned to ship X, Y, Z")
+- Numbered or bulleted list of features with priorities
+- Copy-paste from any tool
+- Screenshot description (PM describes what's in the screenshot)
+ 
+From paste: extract every item that has:
+- A name (what the feature/item is)
+- A time target (when it was planned)
+- At minimum implied priority (if mentioned)
+ 
+Flag: paste-sourced roadmaps will have lower confidence — the audit will note
+where roadmap interpretation required inference.
+ 
+---
+ 
+## Normalised Roadmap Package
+ 
+Output structure (identical regardless of source):
+ 
+```
+ROADMAP PACKAGE
+════════════════
+Source:      [Aha! / Confluence / Excel / Notion / Linear / Productboard / Paste]
+Period:      [Quarter / Sprint / Date range]
+Extracted:   [N] roadmap commitments
+Confidence:  [HIGH — structured tool / MEDIUM — table/doc / LOW — prose/paste]
+ 
+COMMITTED FEATURES (for this audit period):
+[For each item:]
+ 
+  FEATURE: [Name]
+  ───────────────
+  Theme/Initiative:  [parent epic or theme, or "standalone"]
+  Planned period:    [Q1 / Sprint N / Month]
+  Priority:          [P1/Critical/Must-have/High — or normalised to H/M/L]
+  OKR link:          [explicit link / inferred from description / none]
+  Owner:             [team or person]
+  Status at audit:   [Shipped / In progress / Not started / Deprioritised]
+  Jira epic link:    [if cross-referenceable to sprint data]
+ 
+FEATURES PLANNED BUT NOT IN SPRINT DATA:
+[Items on roadmap that don't appear in any sprint ticket — potential drift]
+ 
+FEATURES IN SPRINT DATA BUT NOT ON ROADMAP:
+[Items delivered that weren't committed to — emergent or reactive work]
+ 
+ROADMAP HEALTH SUMMARY:
+  Total commitments for period:   [N]
+  Matched to sprint deliveries:   [N] ([X%])
+  On roadmap, not delivered:      [N] ([X%])
+  Delivered, not on roadmap:      [N] ([X%])
+  Roadmap fidelity score:         [X%] — [HIGH >80% / MEDIUM 50-80% / LOW <50%]
+```
+ 
+---
+ 
+## When There Is No Roadmap
+ 
+If the PM has no roadmap:
+ 
+```
+Flag clearly: "No roadmap provided. Strategic coherence analysis (Agent 5)
+will be based on OKR alignment only — we can assess whether work linked to
+stated objectives, but cannot measure drift from explicit commitments."
+ 
+Proceed with: Agents 1A, 1C, 1D, 2, 3, 4, 6, 7 — all can run without roadmap
+Skip: Agent 5 roadmap drift section (replace with OKR-alignment-only analysis)
+```
+ 
+No roadmap is itself an audit finding. Surface it in Agent 7 (Uncomfortable Truths)
+if the team claims to have strategic direction but cannot produce a roadmap.
